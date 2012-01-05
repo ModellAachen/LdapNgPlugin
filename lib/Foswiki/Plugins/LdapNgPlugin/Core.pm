@@ -84,6 +84,7 @@ sub handleLdap {
   my $theClear = $params->{clear} || '';
   my $theExclude = $params->{exclude} || '';
   my $theInclude = $params->{include} || '';
+  my $theCasesensitive = $params->{casesensitive} || '';
 
   $theSep = $params->{sep} unless defined $theSep;
   $theSep = '$n' unless defined $theSep;
@@ -193,6 +194,7 @@ sub handleLdapUsers {
   my $theSkip = $params->{skip} || 0;
   my $theInclude = $params->{include};
   my $theExclude = $params->{exclude};
+  my $theCasesensitive = $params->{casesensitive};
   my $theHideUnknownUsers = $params->{hideunknown} || 'on';
   $theHideUnknownUsers = ($theHideUnknownUsers eq 'on')?1:0;
 
