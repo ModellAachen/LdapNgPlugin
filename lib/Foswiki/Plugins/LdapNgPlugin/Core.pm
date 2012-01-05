@@ -193,6 +193,7 @@ sub handleLdapUsers {
   my $theSkip = $params->{skip} || 0;
   my $theInclude = $params->{include};
   my $theExclude = $params->{exclude};
+  my $theCasesensitive = $params->{casesensitive} || 'on';
   my $theHideUnknownUsers = $params->{hideunknown} || 'on';
   $theHideUnknownUsers = ($theHideUnknownUsers eq 'on')?1:0;
 
@@ -207,8 +208,15 @@ sub handleLdapUsers {
 
   my $index = 0;
   foreach my $wikiName (sort @$wikiNames) {
-    next if $theExclude && $wikiName =~ /$theExclude/;
-    next if $theInclude && $wikiName !~ /$theInclude/;
+    if ( $theCasesensitive eq 'off ) {
+    	next if $theExclude && lc($wikiName) =~ /$theExclude/i;
+    	next if $theInclude && lc($wikiName) !~ /$theInclude/i;
+    } else {
+    	next if $theExclude && $wikiName =~ /$theExclude/;
+    	next if $theInclude && $wikiName !~ /$theInclude/;
+    }
+    
+    
     my $loginName = $ldap->getLoginOfWikiName($wikiName);
     my $emailAddrs = $ldap->getEmails($loginName);
     my $distinguishedName = $ldap->getDnOfLogin($loginName) || '';
