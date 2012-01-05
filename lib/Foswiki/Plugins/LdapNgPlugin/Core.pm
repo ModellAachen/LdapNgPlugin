@@ -84,6 +84,7 @@ sub handleLdap {
   my $theClear = $params->{clear} || '';
   my $theExclude = $params->{exclude} || '';
   my $theInclude = $params->{include} || '';
+  my $theCasesensitive = $params->{casesensitive} || 'on';
 
   $theSep = $params->{sep} unless defined $theSep;
   $theSep = '$n' unless defined $theSep;
@@ -130,8 +131,14 @@ sub handleLdap {
   my $index = 0;
   foreach my $entry (@entries) {
     my $dn = $entry->dn();
-    next if $theExclude && $dn =~ /$theExclude/;
-    next if $theInclude && $dn !~ /$theInclude/;
+    
+    if ( $theCasesensitive eq 'off' ) {
+    	next if $theExclude && $dn =~ /$theExclude/i;
+    	next if $theInclude && $dn !~ /$theInclude/i;
+    } else {
+    	next if $theExclude && $dn =~ /$theExclude/;
+    	next if $theInclude && $dn !~ /$theInclude/;
+    }
 
     $index++;
     next if $index <= $theSkip;
@@ -208,15 +215,15 @@ sub handleLdapUsers {
 
   my $index = 0;
   foreach my $wikiName (sort @$wikiNames) {
-    if ( $theCasesensitive eq 'off ) {
-    	next if $theExclude && lc($wikiName) =~ /$theExclude/i;
-    	next if $theInclude && lc($wikiName) !~ /$theInclude/i;
+    
+    if ( $theCasesensitive eq 'off' ) {
+    	next if $theExclude && $wikiName =~ /$theExclude/i;
+    	next if $theInclude && $wikiName !~ /$theInclude/i;
     } else {
     	next if $theExclude && $wikiName =~ /$theExclude/;
     	next if $theInclude && $wikiName !~ /$theInclude/;
     }
-    
-    
+
     my $loginName = $ldap->getLoginOfWikiName($wikiName);
     my $emailAddrs = $ldap->getEmails($loginName);
     my $distinguishedName = $ldap->getDnOfLogin($loginName) || '';
